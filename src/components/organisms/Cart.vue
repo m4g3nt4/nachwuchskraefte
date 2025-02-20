@@ -4,7 +4,7 @@
         <li
           v-for="item in cartItems"
           :key="item.id"
-          class="flex items-center mb-6"
+          class="flex items-center p-6 bg-white mb-2"
         >
           <img
             :src="item.image"

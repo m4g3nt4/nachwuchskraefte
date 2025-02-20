@@ -16,7 +16,12 @@ const routes = [
     component: ProductDetail,
     props: true,
   },
-];
+  {
+    path: '/category/:category',
+    name: 'Category',
+    component: ProductList
+  }
+  ];
 
 const router = createRouter({
   history: createWebHistory(),

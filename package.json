@@ -1,5 +1,5 @@
 {
-  "name": "my-vue-app",
+  "name": "vue-online-shop",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.3",
+    "@telekom/scale-components": "^3.0.0-beta.155",
     "axios": "^1.7.9",
     "pinia": "^2.3.1",
     "vue": "^3.5.13",
