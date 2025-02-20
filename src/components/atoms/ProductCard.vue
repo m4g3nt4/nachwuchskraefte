@@ -1,11 +1,10 @@
 <template>
   <scale-card
     class="text-[#322e2f] cursor-pointer text-center relative"
-    @click="goToDetail"
+    
   >
     <div class="w-full h-[300px] flex items-center justify-center overflow-hidden mb-2 relative">
       <img
-        :src="product.image"
         alt="Product Image"
         class="max-w-full max-h-full object-contain"
       />

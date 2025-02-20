@@ -27,13 +27,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useCartStore } from 'src/store/cart';
-
-const cartStore = useCartStore();
-
-const cartItems = computed(() => cartStore.cartItems);
-const cartTotal = computed(() => cartStore.cartTotal);
 </script>
   
 
