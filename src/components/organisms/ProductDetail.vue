@@ -1,50 +1,48 @@
 <template>
-    <div class="product-detail" v-if="!loading && product">
-      <ProductCard :product="product" />
+  <div class="flex items-center justify-center p-20">
+    <div v-if="!loading && product">
+      <ProductCard :product="product" @add-to-cart="handleAddToCart" />
     </div>
     <div v-else>
-      <p>Loading product...</p>
+      <p class="text-gray-600 text-lg">Loading product...</p>
     </div>
-  </template>
-  
-  <script>
-  import axios from 'axios';
-  import ProductCard from '../atoms/ProductCard.vue';
-  
-  export default {
-    name: 'ProductDetail',
-    components: {
-      ProductCard,
-    },
-    data() {
-      return {
-        product: null,
-        loading: true,
-        error: null,
-      };
-    },
-    mounted() {
-      const productId = this.$route.params.id;
-      axios.get(`https://fakestoreapi.com/products/${productId}`)
-        .then(response => {
-          this.product = response.data;
-        })
-        .catch(error => {
-          this.error = error.message;
-        })
-        .finally(() => {
-          this.loading = false;
-        });
-    },
-  };
-  </script>
-  
-  <style scoped>
-  .product-detail {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 5rem;
-  }
-  </style>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import axios from 'axios';
+import ProductCard from '../atoms/ProductCard.vue';
+import { useCartStore } from 'src/store/cart';
+
+const product = ref(null);
+const loading = ref(true);
+const error = ref(null);
+
+const route = useRoute();
+const productId = route.params.id;
+
+const cartStore = useCartStore();
+
+function handleAddToCart(product: any) {
+  cartStore.addToCart(product);
+}
+
+onMounted(() => {
+  axios
+    .get(`https://fakestoreapi.com/products/${productId}`)
+    .then(response => {
+      product.value = response.data;
+    })
+    .catch(err => {
+      error.value = err.message;
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+});
+</script>
+
+
   

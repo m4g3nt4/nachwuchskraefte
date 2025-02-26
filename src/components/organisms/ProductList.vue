@@ -1,63 +1,57 @@
 <template>
   <div>
-    <!-- Sorting and Category Filters -->
+    <!-- Container for Sorting and Category Filters -->
     <div class="flex gap-4 mb-4 text-sm">
-      <!-- Category Dropdown -->
       <div class="relative">
         <scale-button
-        variant="secondary"
-        @click="toggleCategoryDropdown"
-        class="cursor-pointer flex items-center"
-      >
-        <span>Category: {{ selectedCategory ? capitalize(selectedCategory) : 'All' }}</span>
-        <svg
-          class="ml-3 transition-transform duration-200"
-          :class="{ 'rotate-180': categoryDropdownOpen }"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          width="14"
-          height="14"
+          variant="secondary"
+          @click="toggleCategoryDropdown"
+          class="cursor-pointer flex items-center"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
-      </scale-button>
+          <span>Category: {{ selectedCategory ? capitalize(selectedCategory) : 'All' }}</span>
+          <svg
+            class="ml-3 transition-transform duration-200"
+            :class="{ 'rotate-180': categoryDropdownOpen }"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            width="14"
+            height="14"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </scale-button>
       
         <ul
-  v-if="categoryDropdownOpen"
-  class="absolute left-0 mt-2 w-48 z-50 bg-white border border-gray-300 shadow-lg rounded-md"
->
-  <!-- All category option -->
-  <li
-    @click="selectCategory(null)"
-    class="px-4 py-2 cursor-pointer hover:bg-gray-100"
-    :class="{ 'bg-gray-200': selectedCategory === null }"
-  >
-    All
-  </li>
-
-  <!-- Dynamically fetched categories -->
-  <li
-    v-for="category in categories"
-    :key="category"
-    @click="selectCategory(category)"
-    class="px-4 py-2 cursor-pointer hover:bg-gray-100"
-    :class="{ 'bg-gray-200': selectedCategory === category }"
-  >
-    {{ capitalize(category) }}
-  </li>
-</ul>
-
-      
+          v-if="categoryDropdownOpen"
+          class="absolute left-0 mt-2 w-48 z-50 bg-white border border-gray-300 shadow-lg rounded-md"
+        >
+          <li
+            @click="selectCategory(null)"
+            class="px-4 py-2 cursor-pointer hover:bg-gray-100"
+            :class="{ 'bg-gray-200': selectedCategory === null }"
+          >
+            All
+          </li>
+          <li
+            v-for="category in categories"
+            :key="category"
+            @click="selectCategory(category)"
+            class="px-4 py-2 cursor-pointer hover:bg-gray-100"
+            :class="{ 'bg-gray-200': selectedCategory === category }"
+          >
+            {{ capitalize(category) }}
+          </li>
+        </ul>
       </div>
 
-      <!-- Sorting Dropdown -->
+      <!-- Sorting Dropdown: lets users sort the list of products -->
       <div class="relative">
         <scale-button
           variant="secondary"
@@ -100,11 +94,11 @@
       </div>
     </div>
 
-    <!-- Product Cards -->
     <div
       v-if="!loading && sortedProducts.length"
       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
     >
+      <!-- Render a ProductCard for each product in the sorted list -->
       <ProductCard
         v-for="product in sortedProducts"
         :key="product.id"
@@ -112,13 +106,13 @@
         @add-to-cart="addToCart"
       />
     </div>
+    <!-- Fallback message displayed while products are being fetched -->
     <p v-else class="text-center text-gray-500">Loading products...</p>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import ProductCard from '../atoms/ProductCard.vue';
 import { useCartStore } from 'src/store/cart';
@@ -139,12 +133,11 @@ const products = ref<Product[]>([]);
 const categories = ref<string[]>([]);
 const loading = ref<boolean>(true);
 const error = ref<string | null>(null);
-const route = useRoute();
 
+// Capitalize the first letter of a string
 function capitalize(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
-
 
 const sortOptions = ref<SortOption[]>([
   { label: "A → Z", value: "alpha-asc" },
@@ -152,8 +145,10 @@ const sortOptions = ref<SortOption[]>([
   { label: "Price: Low to High", value: "price-asc" },
   { label: "Price: High to Low", value: "price-desc" },
 ]);
+
 const selectedSort = ref<SortOption>({ label: "A → Z", value: "alpha-asc" });
 const selectedCategory = ref<string | null>(null);
+
 const dropdownOpen = ref<boolean>(false);
 const categoryDropdownOpen = ref<boolean>(false);
 
@@ -173,9 +168,8 @@ function changeSort(option: SortOption): void {
 function selectCategory(category: string | null): void {
   selectedCategory.value = category;
   categoryDropdownOpen.value = false;
-  fetchProducts(category ?? 'All'); // Pass 'All' if category is null
+  fetchProducts(category ?? 'All');
 }
-
 
 function addToCart(product: Product): void {
   const cartStore = useCartStore();
@@ -198,27 +192,32 @@ const sortedProducts = computed(() => {
   }
 });
 
-function fetchProducts(category?: string): void {
+// Fetch products from the API, optionally filtering by category,
+// and fall back to a local JSON file if the API call fails.
+async function fetchProducts(category?: string): Promise<void> {
   loading.value = true;
   let url = 'https://fakestoreapi.com/products';
   if (category && category !== 'All') {
     url = `https://fakestoreapi.com/products/category/${category}`;
   }
-  axios
-    .get(url)
-    .then((response) => {
-      products.value = response.data;
-    })
-    .catch((err: Error) => {
-      error.value = err.message;
-    })
-    .finally(() => {
-      loading.value = false;
-    });
+  try {
+    const response = await axios.get(url);
+    products.value = response.data;
+  } catch (err: any) {
+    // Set the error message from the failed API call
+    error.value = err.message;
+    // Fallback: attempt to load the local backup JSON file.
+    try {
+      const fallbackResponse = await axios.get('/fallbackProducts.json');
+      products.value = fallbackResponse.data;
+    } catch (fallbackErr: any) {
+      error.value = `Both API and fallback failed: ${fallbackErr.message}`;
+    }
+  } finally {
+    loading.value = false;
+  }
 }
 
-
-// Initial fetch for products and categories
 onMounted(() => {
   fetchProducts();
   axios
@@ -231,6 +230,8 @@ onMounted(() => {
     });
 });
 </script>
+
+
 
 
 

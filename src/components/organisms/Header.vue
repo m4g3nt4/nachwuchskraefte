@@ -27,10 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
-
 const router = useRouter();
 
 function goToProducts(): void {
@@ -40,7 +37,6 @@ function goToProducts(): void {
 function goToCart(): void {
   router.push('/cart');
 }
-
 </script>
 
   

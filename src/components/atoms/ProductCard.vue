@@ -62,12 +62,6 @@ function handleAddToCart(): void {
 }
 </script>
 
-<style scoped>
-.card_body {
-  height: 400px;
-}
-</style>
-
 
 
 
