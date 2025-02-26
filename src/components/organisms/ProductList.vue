@@ -134,7 +134,6 @@ const categories = ref<string[]>([]);
 const loading = ref<boolean>(true);
 const error = ref<string | null>(null);
 
-// Capitalize the first letter of a string
 function capitalize(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
@@ -142,8 +141,6 @@ function capitalize(text: string): string {
 const sortOptions = ref<SortOption[]>([
   { label: "A → Z", value: "alpha-asc" },
   { label: "Z → A", value: "alpha-desc" },
-  { label: "Price: Low to High", value: "price-asc" },
-  { label: "Price: High to Low", value: "price-desc" },
 ]);
 
 const selectedSort = ref<SortOption>({ label: "A → Z", value: "alpha-asc" });
@@ -183,30 +180,19 @@ const sortedProducts = computed(() => {
       return items.sort((a, b) => a.title.localeCompare(b.title));
     case "alpha-desc":
       return items.sort((a, b) => b.title.localeCompare(a.title));
-    case "price-asc":
-      return items.sort((a, b) => a.price - b.price);
-    case "price-desc":
-      return items.sort((a, b) => b.price - a.price);
     default:
       return items;
   }
 });
 
-// Fetch products from the API, optionally filtering by category,
-// and fall back to a local JSON file if the API call fails.
-async function fetchProducts(category?: string): Promise<void> {
+async function fetchProducts(): Promise<void> {
   loading.value = true;
   let url = 'https://fakestoreapi.com/products';
-  if (category && category !== 'All') {
-    url = `https://fakestoreapi.com/products/category/${category}`;
-  }
   try {
     const response = await axios.get(url);
     products.value = response.data;
   } catch (err: any) {
-    // Set the error message from the failed API call
     error.value = err.message;
-    // Fallback: attempt to load the local backup JSON file.
     try {
       const fallbackResponse = await axios.get('/fallbackProducts.json');
       products.value = fallbackResponse.data;

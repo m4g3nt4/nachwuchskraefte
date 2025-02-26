@@ -1,18 +1,15 @@
 <template>
   <scale-card
     class="text-[#322e2f] cursor-pointer text-center relative"
-    @click="goToDetail"
   >
     <div class="w-full h-[300px] flex items-center justify-center overflow-hidden mb-2 relative">
       <img
-        :src="product.image"
         alt="Product Image"
         class="max-w-full max-h-full object-contain"
       />
       <scale-button
         variant="secondary"
         icon-only
-        @click.stop="handleAddToCart"
         class="absolute bottom-0.5 right-0.5 bg-white/40 rounded-lg"
       >
         <svg
@@ -39,8 +36,6 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
-
 interface Product {
   id: number | string;
   image: string;
@@ -49,17 +44,6 @@ interface Product {
 }
 
 const props = defineProps<{ product: Product }>();
-const emit = defineEmits<{ (e: 'add-to-cart', product: Product): void }>();
-
-const router = useRouter();
-
-function goToDetail(): void {
-  router.push({ name: 'ProductDetail', params: { id: props.product.id } });
-}
-
-function handleAddToCart(): void {
-  emit('add-to-cart', props.product);
-}
 </script>
 
 
