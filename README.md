@@ -1,6 +1,7 @@
 ## Aufgaben
-1. Das Programm scheint nicht richtig zu funktionieren, die Bilder der Produkte werden nicht angezeigt. Behebe das Problem.
-2. Füge eine neue Option zum Sortieren der Produkte ein
-3. Errichte eine gute Detailseite
-4. Die Produkte sollen dem Warenkorb hinzugefügt werden können
+1. Die Produktbilder werden nicht angezeigt. Untersuche und behebe das Problem.
+2. Momentant werden die Produkte nur nach Name sortiert. Implementiere eine neue Sortieroption.
+3. Entwickle eine Detailseite für die Produkte.
+4. Erstelle unterschiedliche Produktkategorien und stelle sicher, dass Produkte korrekt nach Kategorie gefiltert und angezeigt werden.
+4. Ermögliche es den Nutzern, Produkte dem Warenkorb hinzuzufügen.
  
