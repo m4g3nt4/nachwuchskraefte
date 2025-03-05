@@ -1,6 +1,7 @@
 <template>
   <scale-card
     class="text-[#322e2f] cursor-pointer text-center relative"
+    data-mode="light"
   >
     <div class="w-full h-[300px] flex items-center justify-center overflow-hidden mb-2 relative">
       <img
