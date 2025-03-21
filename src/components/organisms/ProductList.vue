@@ -2,95 +2,44 @@
   <div>
     <!-- Container for Sorting and Category Filters -->
     <div class="flex gap-4 mb-4 text-sm">
-      <div class="relative">
-        <scale-button
-          variant="secondary"
-          @click="toggleCategoryDropdown"
-          class="cursor-pointer flex items-center"
+      <div class="flex">
+        <scale-dropdown-select 
+          label="Category" 
+          value="all" 
+          style="min-width: 200px;"
+          @scale-change="selectCategory"
         >
-          <span>Category: {{ selectedCategory ? capitalize(selectedCategory) : 'All' }}</span>
-          <svg
-            class="ml-3 transition-transform duration-200"
-            :class="{ 'rotate-180': categoryDropdownOpen }"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            width="14"
-            height="14"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </scale-button>
-      
-        <ul
-          v-if="categoryDropdownOpen"
-          class="absolute left-0 mt-2 w-48 z-50 bg-white border border-gray-300 shadow-lg rounded-md"
-        >
-          <li
-            @click="selectCategory(null)"
-            class="px-4 py-2 cursor-pointer hover:bg-gray-100"
-            :class="{ 'bg-gray-200': selectedCategory === null }"
+          <scale-dropdown-select-item
+            value="all"
           >
             All
-          </li>
-          <li
+          </scale-dropdown-select-item>
+          <scale-dropdown-select-item
             v-for="category in categories"
             :key="category"
-            @click="selectCategory(category)"
-            class="px-4 py-2 cursor-pointer hover:bg-gray-100"
-            :class="{ 'bg-gray-200': selectedCategory === category }"
+            :value="category"
           >
             {{ capitalize(category) }}
-          </li>
-        </ul>
+          </scale-dropdown-select-item>
+        </scale-dropdown-select>
       </div>
 
       <!-- Sorting Dropdown: lets users sort the list of products -->
-      <div class="relative">
-        <scale-button
-          variant="secondary"
-          @click="toggleDropdown"
-          class="cursor-pointer flex items-center"
+      <div class="relative flex">
+        <scale-dropdown-select
+          label="Sort By"
+          value="alpha-asc"
+          style="min-width: 200px;"
+          @scale-change="changeSort"
         >
-          <span>Sort By: {{ selectedSort.label }}</span>
-          <svg
-            class="ml-3 transition-transform duration-200"
-            :class="{ 'rotate-180': dropdownOpen }"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            width="14"
-            height="14"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </scale-button>
-        <ul
-          v-if="dropdownOpen"
-          class="absolute left-0 mt-2 w-48 z-50 bg-white border border-gray-300 shadow-lg rounded-md"
-        >
-          <li
+          <scale-dropdown-select-item
             v-for="option in sortOptions"
             :key="option.value"
-            @click="changeSort(option)"
-            class="px-4 py-2 cursor-pointer hover:bg-gray-100"
-            :class="{ 'bg-gray-200': option.value === selectedSort.value }"
+            :value="option.value"
           >
             {{ option.label }}
-          </li>
-        </ul>
+          </scale-dropdown-select-item>
+        </scale-dropdown-select>
       </div>
     </div>
 
@@ -146,20 +95,13 @@ const sortOptions = ref<SortOption[]>([
 const selectedSort = ref<SortOption>({ label: "A → Z", value: "alpha-asc" });
 const selectedCategory = ref<string | null>(null);
 
-const dropdownOpen = ref<boolean>(false);
 const categoryDropdownOpen = ref<boolean>(false);
 
-function toggleDropdown(): void {
-  dropdownOpen.value = !dropdownOpen.value;
-}
-
-function toggleCategoryDropdown(): void {
-  categoryDropdownOpen.value = !categoryDropdownOpen.value;
-}
-
-function changeSort(option: SortOption): void {
-  selectedSort.value = option;
-  dropdownOpen.value = false;
+function changeSort(event): void {
+  const selectedValue = event.detail.value;
+  const sortOption = sortOptions.value.find((option) => option.value === selectedValue);
+  if (!sortOption) return;
+  selectedSort.value = sortOption;
 }
 
 function selectCategory(category: string | null): void {
