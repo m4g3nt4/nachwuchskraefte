@@ -155,6 +155,16 @@ onMounted(() => {
     })
     .catch((err: Error) => {
       console.error(err.message);
+      return axios.get('/fallbackProducts.json');
+    })
+    .then((fallbackResponse) => {
+      if (fallbackResponse && fallbackResponse.data) {
+        const uniqueCategories = new Set(fallbackResponse.data.map((product: Product) => product.category));
+        categories.value = Array.from(uniqueCategories);
+      }
+    })
+    .catch((fallbackErr: any) => {
+      console.error(`Both API and fallback failed: ${fallbackErr.message}`);
     });
 });
 </script>
