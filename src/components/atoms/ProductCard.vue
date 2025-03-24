@@ -6,6 +6,7 @@
   >
     <div class="w-full h-[300px] flex items-center justify-center overflow-hidden mb-2 relative">
       <img
+        :src="product.image"
         alt="Product Image"
         class="max-w-full max-h-full object-contain"
       />
@@ -35,6 +36,7 @@
       {{ product.title }}
     </h2>
     <p class="text-base text-left">${{ product.price }}</p>
+    <p v-if="showDetail" class="text-base text-left">{{ product.description }}</p>
   </scale-card>
 </template>
 
@@ -52,7 +54,7 @@ interface Product {
 const router = useRouter();
 const cartStore = useCartStore();
 
-const props = defineProps<{ product: Product }>();
+const props = defineProps<{ product: Product, showDetail?: boolean }>();
 
 const goToDetail = (): void => {
   router.push({ name: 'ProductDetail', params: { id: props.product.id } });

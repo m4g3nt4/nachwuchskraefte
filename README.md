@@ -1,7 +1,7 @@
 # Nachwuchskräfte Webshop
 
 ## Installation
-Lade das Projekt von GitHub herunter und installiere alle notwendigen Pakete. Navigiere in den Branch 'bewerber' und löse die Aufgaben.
+Lade das Projekt von GitHub herunter und installiere alle notwendigen Pakete. Navigiere in den Branch 'applicants' und löse die Aufgaben.
 ```
 git clone https://github.com/m4g3nt4/nachwuchskraefte.git
 cd nachwuchskraefte

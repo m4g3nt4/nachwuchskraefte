@@ -81,7 +81,6 @@ interface SortOption {
 const products = ref<Product[]>([]);
 const categories = ref<string[]>([]);
 const loading = ref<boolean>(true);
-const error = ref<string | null>(null);
 
 function capitalize(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
@@ -97,17 +96,18 @@ const selectedCategory = ref<string | null>(null);
 
 const categoryDropdownOpen = ref<boolean>(false);
 
-function changeSort(event): void {
+function changeSort(event: Event): void {
   const selectedValue = event.detail.value;
   const sortOption = sortOptions.value.find((option) => option.value === selectedValue);
   if (!sortOption) return;
   selectedSort.value = sortOption;
 }
 
-function selectCategory(category: string | null): void {
+function selectCategory(event: Event): void {
+  let category = event.detail.value;
   selectedCategory.value = category;
   categoryDropdownOpen.value = false;
-  fetchProducts(category ?? 'All');
+  fetchProducts(category ?? 'all');
 }
 
 function addToCart(product: Product): void {
@@ -127,23 +127,33 @@ const sortedProducts = computed(() => {
   }
 });
 
-async function fetchProducts(): Promise<void> {
+async function fetchProducts(category?: string): Promise<void> {
   loading.value = true;
-  let url = 'https://fakestoreapi.com/products';
-  try {
-    const response = await axios.get(url);
-    products.value = response.data;
-  } catch (err: any) {
-    error.value = err.message;
-    try {
-      const fallbackResponse = await axios.get('/fallbackProducts.json');
-      products.value = fallbackResponse.data;
-    } catch (fallbackErr: any) {
-      error.value = `Both API and fallback failed: ${fallbackErr.message}`;
-    }
-  } finally {
-    loading.value = false;
-  }
+  let url = category && category !== "all" ? 'https://fakestoreapi.com/products/category/' + category : 'https://fakestoreapi.com/products';
+  axios
+    .get(url)
+    .then((response) => {
+      products.value = response.data;
+    })
+    .catch((err: Error) => {
+      console.error(err.message);
+      return axios.get('/fallbackProducts.json');
+    })
+    .then((fallbackResponse) => {
+      if (fallbackResponse && fallbackResponse.data) {
+        if (category && category !== "all") {
+          products.value = fallbackResponse.data.filter((product: Product) => product.category === category);
+        } else {
+          products.value = fallbackResponse.data;
+        }
+      }
+    })
+    .catch((fallbackErr: any) => {
+      console.error(`Both API and fallback failed: ${fallbackErr.message}`);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 }
 
 onMounted(() => {
