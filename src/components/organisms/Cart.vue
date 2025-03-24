@@ -1,40 +1,52 @@
 <template>
-    <div class="p-14">
-      <ul v-if="cartItems.length">
-        <li
-          v-for="item in cartItems"
-          :key="item.id"
-          class="flex items-center p-6 bg-white mb-2"
-        >
-          <img
-            :src="item.image"
-            alt="Product Image"
-            class="w-20 object-contain mr-4"
-          />
-          <div class="flex flex-col">
-            <div class="font-bold">{{ item.title }}</div>
-            <div>
-              ${{ item.price }} x {{ item.quantity }}
-            </div>
-          </div>
-        </li>
-      </ul>
-      <p v-else>Your cart is empty.</p>
-      <div v-if="cartItems.length" class="mt-16 font-bold">
-        Total: ${{ cartTotal.toFixed(2) }}
-      </div>
+    <div>
+        <scale-data-grid v-if="cartItems.length" id="shoppingCart" hide-menu numbered></scale-data-grid>
+        <p v-else style="color: black;">Your cart is empty.</p>
+        <div v-if="cartItems.length" class="mt-16 font-bold" style="color: black;">
+            Total: ${{ cartTotal.toFixed(2) }}
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useCartStore } from 'src/store/cart';
+import { computed, onMounted, watch } from 'vue';
+import { useCartStore } from '../../store/cart';
 
 const cartStore = useCartStore();
 
 const cartItems = computed(() => cartStore.cartItems);
 const cartTotal = computed(() => cartStore.cartTotal);
-</script>
-  
 
-  
+const fields = [
+    { type: 'text', label: 'Name' },
+    { type: 'number', label: 'Quantity' },
+    { type: 'number', label: 'Price', prefix: '$' },
+    { type: 'actions', label: 'Actions' },
+];
+const rows = computed(() =>
+    cartItems.value.map(item => [
+        item.title,
+        item.quantity,
+        item.price,
+        [{ label: 'Delete', variant: 'secondary', onClick: () => cartStore.removeFromCart(item), }]
+    ])
+);
+
+const loadTableData = () => {
+    const table = document.querySelector('#shoppingCart');
+    table.fields = fields;
+    table.rows = rows.value;
+}
+
+onMounted(() => {
+    if (cartItems.value.length) {
+        loadTableData();
+    }
+});
+
+watch(rows, () => {
+    if (cartItems.value.length) {
+        loadTableData();
+    }
+});
+</script>
