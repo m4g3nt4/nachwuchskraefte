@@ -6,7 +6,6 @@
   >
     <div class="w-full h-[300px] flex items-center justify-center overflow-hidden mb-2 relative">
       <img
-        :src="product.image"
         alt="Product Image"
         class="max-w-full max-h-full object-contain"
       />
@@ -14,7 +13,6 @@
         variant="secondary"
         icon-only
         class="absolute bottom-0.5 right-0.5 bg-white/40 rounded-lg"
-        @click="addToCart"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -58,10 +56,5 @@ const props = defineProps<{ product: Product, showDetail?: boolean }>();
 
 const goToDetail = (): void => {
   router.push({ name: 'ProductDetail', params: { id: props.product.id } });
-}
-
-const addToCart = (event: Event): void => {
-  event.stopPropagation();
-  cartStore.addToCart(props.product);
 }
 </script>
