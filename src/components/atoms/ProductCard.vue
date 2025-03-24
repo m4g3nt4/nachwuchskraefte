@@ -36,7 +36,7 @@
       {{ product.title }}
     </h2>
     <p class="text-base text-left">${{ product.price }}</p>
-    <p v-if="showDetail" class="text-base text-left">{{ product.description }}</p>
+    <p v-if="showDetail" class="text-base text-left" style="padding-top: 10px;">{{ product.description }}</p>
   </scale-card>
 </template>
 
