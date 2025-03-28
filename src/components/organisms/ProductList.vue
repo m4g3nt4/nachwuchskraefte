@@ -2,6 +2,28 @@
   <div>
     <!-- Container for Sorting and Category Filters -->
     <div class="flex gap-4 mb-4 text-sm">
+      <div class="flex">
+        <scale-dropdown-select 
+          label="Category" 
+          value="all" 
+          style="min-width: 200px;"
+          @scale-change="selectCategory"
+        >
+          <scale-dropdown-select-item
+            value="all"
+          >
+            All
+          </scale-dropdown-select-item>
+          <scale-dropdown-select-item
+            v-for="category in categories"
+            :key="category"
+            :value="category"
+          >
+            {{ capitalize(category) }}
+          </scale-dropdown-select-item>
+        </scale-dropdown-select>
+      </div>
+
       <!-- Sorting Dropdown: lets users sort the list of products -->
       <div class="relative flex">
         <scale-dropdown-select
@@ -79,6 +101,13 @@ function changeSort(event: Event): void {
   const sortOption = sortOptions.value.find((option) => option.value === selectedValue);
   if (!sortOption) return;
   selectedSort.value = sortOption;
+}
+
+function selectCategory(event: Event): void {
+  let category = event.detail.value;
+  selectedCategory.value = category;
+  categoryDropdownOpen.value = false;
+  fetchProducts(category ?? 'all');
 }
 
 function addToCart(product: Product): void {
