@@ -89,6 +89,8 @@ function capitalize(text: string): string {
 const sortOptions = ref<SortOption[]>([
   { label: "A → Z", value: "alpha-asc" },
   { label: "Z → A", value: "alpha-desc" },
+  { label: "$ → $$$", value: "price-asc" },
+  { label: "$$$ → $", value: "price-desc" },
 ]);
 
 const selectedSort = ref<SortOption>({ label: "A → Z", value: "alpha-asc" });
@@ -122,6 +124,10 @@ const sortedProducts = computed(() => {
       return items.sort((a, b) => a.title.localeCompare(b.title));
     case "alpha-desc":
       return items.sort((a, b) => b.title.localeCompare(a.title));
+    case "price-asc":
+      return items.sort((a, b) => a.price - b.price);
+    case "price-desc":
+      return items.sort((a, b) => b.price - a.price);
     default:
       return items;
   }
